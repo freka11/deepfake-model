@@ -1,0 +1,99 @@
+balance_datasets: true
+batch_size: 2
+cache_size_mb: 500
+cpu_optimized: true
+datasets:
+  kaggle_140k:
+    enabled: true
+    path: C:\Users\Likhith Sai\Downloads\DeepfakeDetector-main\DeepfakeDetector-main\sample_kaggle_dataset
+    streaming: true
+    subsets:
+      test: test
+      train: train
+      val: valid
+    weight: 1.0
+  pggan_128_256:
+    enabled: true
+    path: .\pggan_multi_stage\128_256_train
+    streaming: true
+    subsets:
+      test: 128_256_test/fake
+      train: 128_256_train/fake
+      val: 128_256_valid/fake
+    weight: 0.3
+  pggan_32_64:
+    enabled: true
+    path: .\pggan_multi_stage\32_64_train
+    streaming: true
+    subsets:
+      test: 32_64_test/fake
+      train: 32_64_train/fake
+      val: 32_64_valid/fake
+    weight: 0.3
+  pggan_512_1024:
+    enabled: true
+    path: .\pggan_multi_stage\512_1024_train
+    streaming: true
+    subsets:
+      test: 512_1024_test/fake
+      train: 512_1024_train/fake
+      val: 512_1024_valid/fake
+    weight: 0.3
+  test_dataset:
+    enabled: false
+    path: C:\Users\Likhith Sai\Downloads\DeepfakeDetector-main\DeepfakeDetector-main\test_dataset
+    subsets:
+      test: test
+      train: train
+      val: valid
+    weight: 1.0
+early_stopping_patience: 3
+gradient_accumulation_steps: 8
+kaggle_dataset_path: C:\Users\Likhith Sai\Downloads\DeepfakeDetector-main\DeepfakeDetector-main\sample_kaggle_dataset
+log_every_n_steps: 10
+lr: 0.0001
+max_workers: 2
+memory_limit_gb: 6
+mixed_precision: false
+monitor_memory: true
+monitor_metric: val_loss
+num_epochs: 10
+num_threads: 4
+oversample_minority: true
+persistent_workers: true
+pin_memory: false
+sampling_strategy: weighted
+save_every_epoch: true
+save_top_k: 3
+scheduler_factor: 0.5
+scheduler_patience: 2
+sequential_training:
+  enabled: true
+  stages:
+    - name: "kaggle_baseline"
+      datasets: ["kaggle_140k"]
+      epochs: 5
+      description: "Baseline training on Kaggle dataset"
+    
+    - name: "pggan_low_res"
+      datasets: ["kaggle_140k", "pggan_32_64"]
+      epochs: 3
+      description: "Fine-tune with low-resolution PGGAN (32x32, 64x64)"
+    
+    - name: "pggan_mid_res"
+      datasets: ["kaggle_140k", "pggan_128_256"]
+      epochs: 3
+      description: "Fine-tune with medium-resolution PGGAN (128x128, 256x256)"
+    
+    - name: "pggan_high_res"
+      datasets: ["kaggle_140k", "pggan_512_1024"]
+      epochs: 3
+      description: "Fine-tune with high-resolution PGGAN (512x512, 1024x1024)"
+test_dataset_path: C:\Users\Likhith Sai\Downloads\DeepfakeDetector-main\DeepfakeDetector-main\test_dataset
+test_paths:
+- C:\Users\Likhith Sai\Downloads\DeepfakeDetector-main\DeepfakeDetector-main\sample_kaggle_dataset\test
+train_paths:
+- C:\Users\Likhith Sai\Downloads\DeepfakeDetector-main\DeepfakeDetector-main\sample_kaggle_dataset\train
+use_mkl: true
+val_paths:
+- C:\Users\Likhith Sai\Downloads\DeepfakeDetector-main\DeepfakeDetector-main\sample_kaggle_dataset\valid
